@@ -1,12 +1,6 @@
 import { useState } from 'react'
-
-interface CatCardProps {
-  name: string
-  breed: string
-  sex: 'male' | 'female'
-  ageMonths: number
-  rating: number
-}
+import { useDraggable } from '@dnd-kit/core'
+import type { Cat } from '../../types/cat'
 
 function formatAge(months: number): string {
   if (months < 12) return `${months} mo`
@@ -14,15 +8,29 @@ function formatAge(months: number): string {
   return `${years} ${years === 1 ? 'yr' : 'yrs'}`
 }
 
-export default function CatCard({ name, breed, sex, ageMonths, rating }: CatCardProps) {
+export default function CatCard({ name, breed, sex, ageMonths, rating }: Cat) {
   const [expanded, setExpanded] = useState(false)
 
-  return (
-    <div className="rounded-lg border border-strawberry bg-deep-space overflow-hidden">
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: name,
+    data: { name, breed, sex, ageMonths, rating } satisfies Cat,
+  })
 
-      {/* Always-visible top row */}
+  const style = transform
+    ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`, zIndex: 50 }
+    : undefined
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`relative rounded-lg border border-strawberry bg-deep-space overflow-hidden transition-opacity ${isDragging ? 'opacity-40' : 'opacity-100'}`}
+    >
+      {/* Always-visible top row — drag handle + expand toggle */}
       <div
-        className="flex items-center gap-4 px-4 py-3 cursor-pointer select-none hover:bg-white/5 transition-colors"
+        {...listeners}
+        {...attributes}
+        className="flex items-center gap-4 px-4 py-3 cursor-grab active:cursor-grabbing select-none hover:bg-white/5 transition-colors"
         onClick={() => setExpanded(!expanded)}
       >
         <span className="text-4xl leading-none">🐱</span>
@@ -52,7 +60,6 @@ export default function CatCard({ name, breed, sex, ageMonths, rating }: CatCard
       {/* Expandable detail section */}
       {expanded && (
         <div className="border-t border-steel-blue/40 px-4 py-4 flex flex-col gap-4">
-
           <div className="flex flex-col gap-1">
             <span className="text-xs font-semibold uppercase tracking-widest text-steel-blue">Description</span>
             <p className="text-sm text-frosted-blue/80">
@@ -81,7 +88,6 @@ export default function CatCard({ name, breed, sex, ageMonths, rating }: CatCard
             <span className="text-xs font-semibold uppercase tracking-widest text-steel-blue">Genotype</span>
             <span className="text-sm font-mono text-frosted-blue/80 tracking-wide">B/b · Mc/Mc · Ta/ta · ww</span>
           </div>
-
         </div>
       )}
     </div>
