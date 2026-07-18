@@ -3,10 +3,14 @@ export default function SpeedControls() {
 
   return (
     <div className="flex items-center gap-1">
-      {speeds.map((label) => (
+      {speeds.map((label, i) => (
         <button
           key={label}
-          className="px-2.5 py-1 text-xs rounded bg-stone-700 text-stone-200 hover:bg-stone-600 transition-colors"
+          className={`px-2.5 py-1 text-xs rounded transition-colors ${
+            i === 1
+              ? 'bg-strawberry text-honeydew'
+              : 'bg-steel-blue text-honeydew hover:bg-frosted-blue hover:text-deep-space'
+          }`}
         >
           {label}
         </button>
