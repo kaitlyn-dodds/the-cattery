@@ -1,11 +1,6 @@
 import { useDroppable } from '@dnd-kit/core'
-import type { Cat } from '../../types/cat'
-
-function formatAge(months: number): string {
-  if (months < 12) return `${months} mo`
-  const years = Math.floor(months / 12)
-  return `${years} ${years === 1 ? 'yr' : 'yrs'}`
-}
+import type { Cat } from '../../types'
+import { getAgeInMonths, formatAge } from '../../utils/gameTime'
 
 interface DropSlotProps {
   role: 'queen' | 'stud'
@@ -49,11 +44,11 @@ function DropSlot({ role, cat, onClear }: DropSlotProps) {
             <div className="flex flex-col items-end gap-2 shrink-0 pr-4">
               <div className="flex gap-0.5">
                 {Array.from({ length: 5 }, (_, i) => (
-                  <span key={i} className={`text-sm ${i < cat.rating ? 'text-strawberry' : 'text-steel-blue/40'}`}>★</span>
+                  <span key={i} className={`text-sm ${i < cat.conformation ? 'text-strawberry' : 'text-steel-blue/40'}`}>★</span>
                 ))}
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-sm text-frosted-blue">{formatAge(cat.ageMonths)}</span>
+                <span className="text-sm text-frosted-blue">{formatAge(getAgeInMonths(cat.birthDate))}</span>
                 <span className={`text-lg leading-none font-bold ${isQueen ? 'text-strawberry' : 'text-frosted-blue'}`}>
                   {isQueen ? '♀' : '♂'}
                 </span>
