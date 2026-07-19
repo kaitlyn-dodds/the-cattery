@@ -3,7 +3,8 @@ import { DndContext, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import type { DragEndEvent } from '@dnd-kit/core'
 import CatCard from '../components/cats/CatCard'
 import BreedingWorkspace from '../components/matchmaking/BreedingWorkspace'
-import type { Cat } from '../types'
+import type { Cat, LitterPrediction } from '../types'
+import { predictLitter } from '../utils/breedingUtils'
 
 const queens: Cat[] = [
   {
@@ -119,6 +120,7 @@ const studs: Cat[] = [
 export default function Matchmaking() {
   const [selectedQueen, setSelectedQueen] = useState<Cat | null>(null)
   const [selectedStud, setSelectedStud] = useState<Cat | null>(null)
+  const [predictions, setPredictions] = useState<LitterPrediction[]>([])
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
@@ -131,10 +133,24 @@ export default function Matchmaking() {
     const cat = active.data.current as Cat
 
     if (over.id === 'queen-slot' && cat.sex === 'female') {
-      setSelectedQueen(cat)
+      const newQueen = cat
+      setSelectedQueen(newQueen)
+      if (selectedStud) setPredictions(predictLitter(newQueen, selectedStud))
     } else if (over.id === 'stud-slot' && cat.sex === 'male') {
-      setSelectedStud(cat)
+      const newStud = cat
+      setSelectedStud(newStud)
+      if (selectedQueen) setPredictions(predictLitter(selectedQueen, newStud))
     }
+  }
+
+  function handleClearQueen() {
+    setSelectedQueen(null)
+    setPredictions([])
+  }
+
+  function handleClearStud() {
+    setSelectedStud(null)
+    setPredictions([])
   }
 
   return (
@@ -154,8 +170,9 @@ export default function Matchmaking() {
           <BreedingWorkspace
             queen={selectedQueen}
             stud={selectedStud}
-            onClearQueen={() => setSelectedQueen(null)}
-            onClearStud={() => setSelectedStud(null)}
+            onClearQueen={handleClearQueen}
+            onClearStud={handleClearStud}
+            predictions={predictions}
           />
         </div>
 

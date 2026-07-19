@@ -1,6 +1,7 @@
 import { useDroppable } from '@dnd-kit/core'
-import type { Cat } from '../../types'
+import type { Cat, LitterPrediction } from '../../types'
 import { getAgeInMonths, formatAge } from '../../utils/gameTime'
+import KittenPredictionCard from './KittenPredictionCard'
 
 interface DropSlotProps {
   role: 'queen' | 'stud'
@@ -71,9 +72,10 @@ interface BreedingWorkspaceProps {
   stud: Cat | null
   onClearQueen: () => void
   onClearStud: () => void
+  predictions: LitterPrediction[]
 }
 
-export default function BreedingWorkspace({ queen, stud, onClearQueen, onClearStud }: BreedingWorkspaceProps) {
+export default function BreedingWorkspace({ queen, stud, onClearQueen, onClearStud, predictions }: BreedingWorkspaceProps) {
   return (
     <div className="flex flex-col items-center pt-8">
 
@@ -91,14 +93,25 @@ export default function BreedingWorkspace({ queen, stud, onClearQueen, onClearSt
 
       <div className="w-0.5 h-4 bg-steel-blue/25" />
 
-      <div className="w-[672px] rounded-lg border border-dashed border-steel-blue/25 px-4 py-8 flex flex-col items-center gap-2">
-        <span className="text-2xl opacity-20">🐾</span>
-        <span className="text-sm text-steel-blue/40 text-center">
-          {queen && stud
-            ? `Previewing litter for ${queen.name} × ${stud.name}`
-            : 'Pair a queen and stud to preview the potential litter'}
-        </span>
-      </div>
+      {predictions.length > 0 ? (
+        <div className="w-[672px] flex flex-col gap-2">
+          <span className="text-xs font-semibold uppercase tracking-widest text-steel-blue">
+            Potential Litter — {queen!.name} × {stud!.name}
+          </span>
+          <div className="grid grid-cols-2 gap-2">
+            {predictions.map((p) => (
+              <KittenPredictionCard key={p.id} {...p} />
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="w-[672px] rounded-lg border border-dashed border-steel-blue/25 px-4 py-8 flex flex-col items-center gap-2">
+          <span className="text-2xl opacity-20">🐾</span>
+          <span className="text-sm text-steel-blue/40 text-center">
+            Pair a queen and stud to preview the potential litter
+          </span>
+        </div>
+      )}
 
     </div>
   )
