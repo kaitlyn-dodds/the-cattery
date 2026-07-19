@@ -73,9 +73,10 @@ interface BreedingWorkspaceProps {
   onClearQueen: () => void
   onClearStud: () => void
   predictions: LitterPrediction[]
+  onBreed: () => void
 }
 
-export default function BreedingWorkspace({ queen, stud, onClearQueen, onClearStud, predictions }: BreedingWorkspaceProps) {
+export default function BreedingWorkspace({ queen, stud, onClearQueen, onClearStud, predictions, onBreed }: BreedingWorkspaceProps) {
   return (
     <div className="flex flex-col items-center pt-8">
 
@@ -112,6 +113,19 @@ export default function BreedingWorkspace({ queen, stud, onClearQueen, onClearSt
           </span>
         </div>
       )}
+
+      <div className="w-[672px] mt-4">
+        <button
+          onClick={onBreed}
+          disabled={!queen || !stud}
+          className="w-full py-2.5 rounded-lg text-sm font-semibold tracking-wide transition-colors
+            bg-strawberry text-honeydew
+            hover:bg-strawberry/80
+            disabled:bg-steel-blue/20 disabled:text-steel-blue/40 disabled:cursor-not-allowed"
+        >
+          Breed Pair
+        </button>
+      </div>
 
     </div>
   )

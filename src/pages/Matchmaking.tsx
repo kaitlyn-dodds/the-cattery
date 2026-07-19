@@ -153,6 +153,13 @@ export default function Matchmaking() {
     setPredictions([])
   }
 
+  function handleBreed() {
+    console.log(`Bred ${selectedQueen?.name} with ${selectedStud?.name}`)
+    setSelectedQueen(null)
+    setSelectedStud(null)
+    setPredictions([])
+  }
+
   return (
     <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
       <div className="flex gap-6 h-full">
@@ -173,6 +180,7 @@ export default function Matchmaking() {
             onClearQueen={handleClearQueen}
             onClearStud={handleClearStud}
             predictions={predictions}
+            onBreed={handleBreed}
           />
         </div>
 
